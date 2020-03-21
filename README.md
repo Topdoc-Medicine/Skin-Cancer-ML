@@ -1,2 +1,3 @@
-# ML-Algorithms
-Early Diagnosis for Patients
+# Skin Cancer ML Classification
+Deep-learning-based Skin Cancer classification
+
