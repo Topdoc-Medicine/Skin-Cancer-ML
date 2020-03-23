@@ -382,7 +382,7 @@ fig2.plot(total_loss_val, label = 'validation loss')
 fig2.plot(total_acc_val, label = 'validation accuracy')
 plt.legend()
 plt.show()
-
+def plot_confusion_matrix(cm, classes,
                           normalize=False,
                           title='Confusion matrix',
                           cmap=plt.cm.Blues):
