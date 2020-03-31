@@ -23,9 +23,9 @@ np.random.seed(10)
 torch.manual_seed(10)
 torch.cuda.manual_seed(10)
 
-print(os.listdir("./skin-cancer-mnist-ham10000"))
+print(os.listdir("/content/skin-cancer-mnist-ham10000/"))
 
-data_dir = './skin-cancer-mnist-ham10000'
+data_dir = '/content/skin-cancer-mnist-ham10000/'
 all_image_path = glob(os.path.join(data_dir, '*', '*.jpg'))
 imageid_path_dict = {os.path.splitext(os.path.basename(x))[0]: x for x in all_image_path}
 lesion_type_dict = {
@@ -37,6 +37,7 @@ lesion_type_dict = {
     'vasc': 'Vascular lesions',
     'df': 'Dermatofibroma'
 }
+
 
 def compute_img_mean_std(image_paths):
     """
@@ -70,9 +71,9 @@ def compute_img_mean_std(image_paths):
     print("normStd = {}".format(stdevs))
     return means,stdevs
 
-# norm_mean,norm_std = compute_img_mean_std(all_image_path)
+norm_mean,norm_std = compute_img_mean_std(all_image_path)
 
-df_original = pd.read_csv(os.path.join(data_dir, 'HAM10000_metadata.csv'))
+df_original = pd.read_csv('/content/skin-cancer-mnist-ham10000/HAM10000_metadata.csv')
 df_original['path'] = df_original['image_id'].map(imageid_path_dict.get)
 df_original['cell_type'] = df_original['dx'].map(lesion_type_dict.get)
 df_original['cell_type_idx'] = pd.Categorical(df_original['cell_type']).codes
@@ -359,6 +360,8 @@ def validate(val_loader, model, criterion, optimizer, epoch):
     print('------------------------------------------------------------')
     return val_loss.avg, val_acc.avg
 
+torch.save(model, 'weights.h5')
+
 epoch_num = 10
 best_val_acc = 0
 total_loss_val, total_acc_val = [],[]
@@ -437,3 +440,6 @@ label_frac_error = 1 - np.diag(confusion_mtx) / np.sum(confusion_mtx, axis=1)
 plt.bar(np.arange(7),label_frac_error)
 plt.xlabel('True Label')
 plt.ylabel('Fraction classified incorrectly')
+
+# model.save("weights.h5")
+torch.save(model, 'weights.h5')
