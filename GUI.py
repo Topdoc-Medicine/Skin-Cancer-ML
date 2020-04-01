@@ -66,8 +66,10 @@ def prediction():
     img = cv2.resize(img, (224, 224))
     img = np.reshape(img, [1, 224, 224, 3])
     img = tf.cast(img, tf.float64)
+    img = tf.Tensor(img, (), int32)
+    print(img)
     outputs = model(img)
-    prediction = torch.max(outputs, 1)
+    prediction = torch.argmax(outputs, 1)
     # prediction = model.predict(img)
     # Class = prob.argmax(axis=1)
     print(prediction)
@@ -83,15 +85,15 @@ print("Final Prediction = ", finalPrediction)
 # else:
 #     print("Unfortunately, you have been diagnosed with Malaria.")
 
-if final == 'tensor(0)':
+if finalPrediction == 'tensor(0)':
     ret = 'POSITIVE FOR SKIN CANCER: Melanocytic nevi'
-elif final == 'tensor(1)' or final == 'tensor(6)':
+elif finalPrediction == 'tensor(1)' or finalPrediction == 'tensor(6)':
     ret = 'POSITIVE FOR SKIN CANCER: Dermatofibroma'
-elif final == 'tensor(2)':
+elif finalPrediction == 'tensor(2)':
     ret = 'NEGATIVE FOR SKIN CANCER: Benign keratosis-like lesions'
-elif final == 'tensor(3)':
+elif finalPrediction == 'tensor(3)':
     ret = 'POSITIVE FOR SKIN CANCER: Basal cell carcinoma'
-elif final == 'tensor(4)':
+elif finalPrediction == 'tensor(4)':
     ret = 'POSITIVE FOR SKIN CANCER: Actinic keratoses'
-elif final == 'tensor(5)':
+elif finalPrediction == 'tensor(5)':
     ret = 'POSITIVE FOR SKIN CANCER: Vascular lesions'
