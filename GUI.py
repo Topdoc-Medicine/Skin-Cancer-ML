@@ -10,6 +10,7 @@ import pandas
 import h5py
 import glob
 import torch
+from torch import optim,nn
 from torchvision import models
 from keras.initializers import glorot_uniform
 
@@ -25,15 +26,18 @@ h5file =  "weights.h5"
 # state = torch.load(h5file)
 # model.load_state_dict(state)
 
+def set_parameter_requires_grad(model, feature_extracting):
+    if feature_extracting:
+        for param in model.parameters():
+            param.requires_grad = False
+
 model = models.densenet121(pretrained=True)
-set_parameter_requires_grad(model, feature_extract)
+set_parameter_requires_grad(model, False)
 num_ftrs = model.classifier.in_features
-model.classifier = nn.Linear(num_ftrs, num_classes)
+model.classifier = nn.Linear(num_ftrs, 7)
 input_size = 224
 
 model = torch.load(h5file)
-
-
 
 def get_filenames():
     global path
@@ -59,19 +63,22 @@ def autoroi(img):
 
 
 def prediction():
-    list_of_files = glob.glob('./skin-cancer-mnist-ham10000/ham10000_images_part_1/*')
+    list_of_files = glob.glob('/content/HAM10000_images_part_1/*')
     latest_file = max(list_of_files, key=os.path.getctime)
+    # print(latest_file)
     img = cv2.imread(latest_file)
     img = autoroi(img)
     img = cv2.resize(img, (224, 224))
     img = np.reshape(img, [1, 224, 224, 3])
     img = tf.cast(img, tf.float64)
-    img = tf.Tensor(img, (), int32)
-    print(img)
+    # img = tf.convert_to_tensor(img, tf.float64)
+    # img = tf.matmul(img, img) + img
+    # print(img)
     outputs = model(img)
+    print(outputs)
     prediction = torch.argmax(outputs, 1)
-    # prediction = model.predict(img)
-    # Class = prob.argmax(axis=1)
+    prediction = model.predict(img)
+    Class = prob.argmax(axis=1)
     print(prediction)
 
 
