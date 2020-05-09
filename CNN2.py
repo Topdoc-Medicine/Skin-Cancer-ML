@@ -44,7 +44,7 @@ def plot_model_history(model_history):
     axs[1].legend(['train', 'val'], loc='best')
     plt.show()
 
-base_skin_dir = os.path.join('..', 'input')
+base_skin_dir = '/content/skin-cancer-mnist-ham10000/'
 
 # Merging images from both folders HAM10000_images_part1.zip and HAM10000_images_part2.zip into one dictionary
 
@@ -147,7 +147,7 @@ model.add(Dense(num_classes, activation='softmax'))
 model.summary()
 
 # Define the optimizer
-optimizer = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+optimizer = Adam(lr=0.001)
 
 # Compile the model
 model.compile(optimizer = optimizer , loss = "categorical_crossentropy", metrics=["accuracy"])
@@ -181,8 +181,9 @@ epochs = 25
 batch_size = 10
 history = model.fit_generator(datagen.flow(x_train,y_train, batch_size=batch_size),
                               epochs = epochs, validation_data = (x_validate,y_validate),
-                              verbose = 1, steps_per_epoch=x_train.shape[0] // batch_size
+                              verbose = 1, steps_per_epoch=x_train.shape[0]
                               , callbacks=[learning_rate_reduction])
+
 
 loss, accuracy = model.evaluate(x_test, y_test, verbose=1)
 loss_v, accuracy_v = model.evaluate(x_validate, y_validate, verbose=1)
