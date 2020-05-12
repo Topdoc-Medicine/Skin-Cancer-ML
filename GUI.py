@@ -1,5 +1,5 @@
-# from Tkinter import *
-# import tkMessageBox as messagebox
+from Tkinter import *
+import tkMessageBox as messagebox
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import matplotlib.pyplot as plt
@@ -9,35 +9,12 @@ import os
 import pandas
 import h5py
 import glob
-import torch
-from torch import optim,nn
-from torchvision import models
 from keras.initializers import glorot_uniform
 
+h5file =  "weights2.h5"
 
-h5file =  "weights.h5"
-# model = torch.load(h5file)
-# model.load_state_dict(checkpoint)
-# # model = model.load_state_dict(torch.load(h5file))
-# # with h5py.File(h5file,'r') as fid:
-# #      model = load_model(fid)
-
-# model = models.densenet121()
-# state = torch.load(h5file)
-# model.load_state_dict(state)
-
-def set_parameter_requires_grad(model, feature_extracting):
-    if feature_extracting:
-        for param in model.parameters():
-            param.requires_grad = False
-
-model = models.densenet121(pretrained=True)
-set_parameter_requires_grad(model, False)
-num_ftrs = model.classifier.in_features
-model.classifier = nn.Linear(num_ftrs, 7)
-input_size = 224
-
-model = torch.load(h5file)
+with h5py.File(h5file,'r') as fid:
+     model = load_model(fid)
 
 def get_filenames():
     global path
@@ -63,22 +40,17 @@ def autoroi(img):
 
 
 def prediction():
-    list_of_files = glob.glob('/content/HAM10000_images_part_1/*')
+    list_of_files = glob.glob('./skin-cancer-mnist-ham10000/HAM10000_images_part_1/*')
     latest_file = max(list_of_files, key=os.path.getctime)
-    # print(latest_file)
     img = cv2.imread(latest_file)
+    # img = cv2.imread("./cell_images/cell_images/Parasitized/C33P1thinF_IMG_20150619_114756a_cell_182.png")
     img = autoroi(img)
-    img = cv2.resize(img, (224, 224))
-    img = np.reshape(img, [1, 224, 224, 3])
+    img = cv2.resize(img, (75, 100))
+    img = np.reshape(img, [1, 75, 100, 3])
     img = tf.cast(img, tf.float64)
-    # img = tf.convert_to_tensor(img, tf.float64)
-    # img = tf.matmul(img, img) + img
-    # print(img)
-    outputs = model(img)
-    print(outputs)
-    prediction = torch.argmax(outputs, 1)
+
     prediction = model.predict(img)
-    Class = prob.argmax(axis=1)
+    # Class = prob.argmax(axis=1) # why was this here lmao
     print(prediction)
 
 
@@ -86,21 +58,9 @@ def prediction():
 
 
 finalPrediction = prediction()
+print(finalPrediction[0])
 print("Final Prediction = ", finalPrediction)
-# if (finalPrediction == 0):
-#     print("Congratulations! You are healthy!")
-# else:
-#     print("Unfortunately, you have been diagnosed with Malaria.")
-
-if finalPrediction == 'tensor(0)':
-    ret = 'POSITIVE FOR SKIN CANCER: Melanocytic nevi'
-elif finalPrediction == 'tensor(1)' or finalPrediction == 'tensor(6)':
-    ret = 'POSITIVE FOR SKIN CANCER: Dermatofibroma'
-elif finalPrediction == 'tensor(2)':
-    ret = 'NEGATIVE FOR SKIN CANCER: Benign keratosis-like lesions'
-elif finalPrediction == 'tensor(3)':
-    ret = 'POSITIVE FOR SKIN CANCER: Basal cell carcinoma'
-elif finalPrediction == 'tensor(4)':
-    ret = 'POSITIVE FOR SKIN CANCER: Actinic keratoses'
-elif finalPrediction == 'tensor(5)':
-    ret = 'POSITIVE FOR SKIN CANCER: Vascular lesions'
+if (finalPrediction < 0.5):
+    print("Congratulations! You are healthy!")
+else:
+    print("Unfortunately, you have been diagnosed with Malaria.")
