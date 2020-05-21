@@ -49,8 +49,11 @@ def prediction():
     img = np.reshape(img, [1, 75, 100, 3])
     img = tf.cast(img, tf.float64)
 
+
+    print(img)
+
     prediction = model.predict(img)
-    # Class = prob.argmax(axis=1) # why was this here lmao
+    prediction = prediction.argmax(axis=1)
     print(prediction)
 
 
@@ -58,9 +61,18 @@ def prediction():
 
 
 finalPrediction = prediction()
-print(finalPrediction[0])
-print("Final Prediction = ", finalPrediction)
-if (finalPrediction < 0.5):
-    print("Congratulations! You are healthy!")
-else:
-    print("Unfortunately, you have been diagnosed with Malaria.")
+print(finalPrediction[[0]])
+if (finalPrediction == 0):
+    print('You have been diagnosed with Melanocytic nevi. Please contact a doctor for assistance soon.')
+elif (finalPrediction == 1):
+    print('You have been diagnosed with Melanoma. Please contact a doctor for assistance soon.')
+elif (finalPrediction == 2):
+    print('You have been diagnosed with Benign keratosis-like lesions. Please contact a doctor for assistance soon.')
+elif (finalPrediction == 3):
+    print('You have been diagnosed with Basal Cell Carcinoma. Please contact a doctor for assistance soon.')
+elif (finalPrediction == 4):
+    print('You have been diagnosed with Actinic Keratoses. Please contact a doctor for assistance soon.')
+elif (finalPrediction == 5):
+    print('You have been diagnosed with Vascular Lesions. Please contact a doctor for assistance soon.')
+elif (finalPrediction == 6):
+    print('You have been diagnosed with Dermatofibroma. Please contact a doctor for assistance soon.')
