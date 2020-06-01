@@ -22,21 +22,19 @@ trans = transforms.Compose([
 
 def prediction():
   image = Image.open(Path("/content/HAM10000_images_part_1/ISIC_0024306.jpg"))
-
   input = trans(image)
-
   input = input.view(1, 3, 256,256)
 
   output = model(input)
 
-  return output
+  pred = int(torch.max(output.data, 1)[1].numpy())
+
+  return pred
 
 
-# prediction = int(torch.max(output.data, 1)[1].numpy())
-print(prediction)
+print(prediction())
 
-finalPrediction = prediction()
-print(finalPrediction[[0]])
+prediction = prediction()
 if (finalPrediction == 0):
     print('You have been diagnosed with Melanocytic nevi. Please contact a doctor for assistance soon.')
 elif (finalPrediction == 1):
