@@ -1,6 +1,8 @@
 # Skin Cancer ML Classification
 Deep-learning-based Skin Cancer classification
 
+Questhacks 3rd Place November 2019
+
 > Diagnosis 7 types of Skin Cancers
 * Elanocytic nevi
 * Dermatofibroma
